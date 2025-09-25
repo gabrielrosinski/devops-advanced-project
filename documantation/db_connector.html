@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module db_connector</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">db_connector</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/mnt/c/Devops%20projects/devops-advanced-project/db_connector.py">/mnt/c/Devops projects/devops-advanced-project/db_connector.py</a></td></tr></table>
+    <p><span class="code"><a href="#Database">Database</a>&nbsp;Connection&nbsp;Module<br>
+&nbsp;<br>
+This&nbsp;module&nbsp;provides&nbsp;database&nbsp;connection&nbsp;management&nbsp;and&nbsp;initialization&nbsp;for&nbsp;MySQL&nbsp;databases.<br>
+It&nbsp;handles&nbsp;user&nbsp;authentication,&nbsp;database&nbsp;schema&nbsp;creation,&nbsp;and&nbsp;connection&nbsp;pooling.<br>
+&nbsp;<br>
+Classes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#Database">Database</a>:&nbsp;Main&nbsp;database&nbsp;connection&nbsp;and&nbsp;management&nbsp;class<br>
+&nbsp;<br>
+Dependencies:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;pymysql:&nbsp;MySQL&nbsp;database&nbsp;driver<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;python-dotenv:&nbsp;Environment&nbsp;variable&nbsp;management<br>
+&nbsp;<br>
+Environment&nbsp;Variables:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DB_HOST:&nbsp;<a href="#Database">Database</a>&nbsp;host&nbsp;(default:&nbsp;localhost)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DB_USER:&nbsp;<a href="#Database">Database</a>&nbsp;username&nbsp;(default:&nbsp;username)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DB_PASSWORD:&nbsp;<a href="#Database">Database</a>&nbsp;password&nbsp;(default:&nbsp;password)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DB_NAME:&nbsp;<a href="#Database">Database</a>&nbsp;name&nbsp;(default:&nbsp;mydb)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DB_ROOT_USER:&nbsp;Root&nbsp;user&nbsp;for&nbsp;admin&nbsp;operations&nbsp;(default:&nbsp;root)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DB_ROOT_PASSWORD:&nbsp;Root&nbsp;password&nbsp;for&nbsp;admin&nbsp;operations&nbsp;(default:&nbsp;'')<br>
+&nbsp;<br>
+Usage:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;db&nbsp;=&nbsp;<a href="#Database">Database</a>()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;conn&nbsp;=&nbsp;db.get_connection()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;cursor&nbsp;=&nbsp;conn.cursor()</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="os.html">os</a><br>
+</td><td class="multicolumn"><a href="pymysql.html">pymysql</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="db_connector.html#Database">Database</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Database">class <strong>Database</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Database">Database</a>&nbsp;connection&nbsp;and&nbsp;management&nbsp;class.<br>
+&nbsp;<br>
+Provides&nbsp;methods&nbsp;for&nbsp;connecting&nbsp;to&nbsp;MySQL&nbsp;databases,&nbsp;managing&nbsp;admin&nbsp;connections,<br>
+creating&nbsp;users,&nbsp;and&nbsp;initializing&nbsp;database&nbsp;schemas.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;config&nbsp;(dict):&nbsp;<a href="#Database">Database</a>&nbsp;connection&nbsp;configuration<br>
+&nbsp;&nbsp;&nbsp;&nbsp;admin_connection:&nbsp;Administrative&nbsp;database&nbsp;connection<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="Database-__init__"><strong>__init__</strong></a>(self)</dt><dd><span class="code">Initialize&nbsp;<a href="#Database">Database</a>&nbsp;instance&nbsp;with&nbsp;configuration&nbsp;from&nbsp;environment&nbsp;variables.</span></dd></dl>
+
+<dl><dt><a name="Database-close_admin_connection"><strong>close_admin_connection</strong></a>(self) -&gt; None</dt><dd><span class="code">Close&nbsp;the&nbsp;administrative&nbsp;database&nbsp;connection.</span></dd></dl>
+
+<dl><dt><a name="Database-connect_as_admin"><strong>connect_as_admin</strong></a>(self, admin_user: str = 'root', admin_password: str = '') -&gt; bool</dt><dd><span class="code">Connect&nbsp;to&nbsp;database&nbsp;with&nbsp;administrative&nbsp;privileges.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;admin_user&nbsp;(str):&nbsp;Admin&nbsp;username&nbsp;(default:&nbsp;'root')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;admin_password&nbsp;(str):&nbsp;Admin&nbsp;password&nbsp;(default:&nbsp;'')<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool:&nbsp;True&nbsp;if&nbsp;connection&nbsp;successful,&nbsp;False&nbsp;otherwise</span></dd></dl>
+
+<dl><dt><a name="Database-create_database_schema"><strong>create_database_schema</strong></a>(self, database_name: str, schema_file: Optional[str] = None) -&gt; bool</dt><dd><span class="code">Create&nbsp;database&nbsp;and&nbsp;initialize&nbsp;schema.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;database_name&nbsp;(str):&nbsp;Name&nbsp;of&nbsp;database&nbsp;to&nbsp;create<br>
+&nbsp;&nbsp;&nbsp;&nbsp;schema_file&nbsp;(Optional[str]):&nbsp;Path&nbsp;to&nbsp;SQL&nbsp;schema&nbsp;file<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool:&nbsp;True&nbsp;if&nbsp;schema&nbsp;created&nbsp;successfully,&nbsp;False&nbsp;otherwise</span></dd></dl>
+
+<dl><dt><a name="Database-create_root_user"><strong>create_root_user</strong></a>(self, username: str, password: str, host: str = '%') -&gt; bool</dt><dd><span class="code">Create&nbsp;a&nbsp;new&nbsp;root&nbsp;user&nbsp;with&nbsp;full&nbsp;privileges.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;username&nbsp;(str):&nbsp;Username&nbsp;for&nbsp;the&nbsp;new&nbsp;root&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;password&nbsp;(str):&nbsp;Password&nbsp;for&nbsp;the&nbsp;new&nbsp;root&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;host&nbsp;(str):&nbsp;Host&nbsp;pattern&nbsp;for&nbsp;user&nbsp;access&nbsp;(default:&nbsp;'%')<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool:&nbsp;True&nbsp;if&nbsp;user&nbsp;created&nbsp;successfully,&nbsp;False&nbsp;otherwise</span></dd></dl>
+
+<dl><dt><a name="Database-get_connection"><strong>get_connection</strong></a>(self)</dt><dd><span class="code">Get&nbsp;a&nbsp;database&nbsp;connection,&nbsp;initializing&nbsp;schema&nbsp;if&nbsp;needed.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pymysql.Connection:&nbsp;Active&nbsp;database&nbsp;connection<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Exception:&nbsp;If&nbsp;connection&nbsp;cannot&nbsp;be&nbsp;established</span></dd></dl>
+
+<dl><dt><a name="Database-initialize_database"><strong>initialize_database</strong></a>(self, admin_user: Optional[str] = None, admin_password: Optional[str] = None, database_name: Optional[str] = None, new_root_user: Optional[str] = None, new_root_password: Optional[str] = None, schema_file: Optional[str] = None) -&gt; bool</dt><dd><span class="code">Initialize&nbsp;complete&nbsp;database&nbsp;setup.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;admin_user&nbsp;(Optional[str]):&nbsp;Admin&nbsp;username<br>
+&nbsp;&nbsp;&nbsp;&nbsp;admin_password&nbsp;(Optional[str]):&nbsp;Admin&nbsp;password<br>
+&nbsp;&nbsp;&nbsp;&nbsp;database_name&nbsp;(Optional[str]):&nbsp;<a href="#Database">Database</a>&nbsp;name&nbsp;to&nbsp;create<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_root_user&nbsp;(Optional[str]):&nbsp;New&nbsp;root&nbsp;user&nbsp;to&nbsp;create<br>
+&nbsp;&nbsp;&nbsp;&nbsp;new_root_password&nbsp;(Optional[str]):&nbsp;Password&nbsp;for&nbsp;new&nbsp;root&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;schema_file&nbsp;(Optional[str]):&nbsp;Path&nbsp;to&nbsp;schema&nbsp;SQL&nbsp;file<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool:&nbsp;True&nbsp;if&nbsp;initialization&nbsp;successful,&nbsp;False&nbsp;otherwise</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>Optional</strong> = typing.Optional</td></tr></table>
+</body></html>

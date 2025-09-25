@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module web_app</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">web_app</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/mnt/c/Devops%20projects/devops-advanced-project/web_app.py">/mnt/c/Devops projects/devops-advanced-project/web_app.py</a></td></tr></table>
+    <p><span class="code">Web&nbsp;Interface&nbsp;Application<br>
+&nbsp;<br>
+FastAPI-based&nbsp;web&nbsp;application&nbsp;that&nbsp;provides&nbsp;HTML&nbsp;responses&nbsp;for&nbsp;user&nbsp;data&nbsp;visualization.<br>
+Serves&nbsp;as&nbsp;a&nbsp;web&nbsp;frontend&nbsp;for&nbsp;displaying&nbsp;user&nbsp;information&nbsp;retrieved&nbsp;from&nbsp;the&nbsp;database.<br>
+&nbsp;<br>
+Endpoints:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;GET&nbsp;/users/get_user_data/{user_id}&nbsp;-&nbsp;Display&nbsp;user&nbsp;information&nbsp;as&nbsp;HTML<br>
+&nbsp;<br>
+Dependencies:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;FastAPI:&nbsp;Web&nbsp;framework<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Database:&nbsp;Custom&nbsp;database&nbsp;connector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;uvicorn:&nbsp;ASGI&nbsp;server<br>
+&nbsp;<br>
+Environment&nbsp;Variables:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;HOST:&nbsp;Server&nbsp;host&nbsp;address&nbsp;(default:&nbsp;127.0.0.1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;WEB_PORT:&nbsp;Server&nbsp;port&nbsp;(default:&nbsp;5001)<br>
+&nbsp;<br>
+Usage:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;python&nbsp;web_app.py</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="os.html">os</a><br>
+</td><td class="multicolumn"><a href="uvicorn.html">uvicorn</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-get_user_data"><strong>get_user_data</strong></a>(user_id: str)</dt><dd><span class="code">Display&nbsp;user&nbsp;data&nbsp;as&nbsp;HTML&nbsp;page.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;user_id&nbsp;(str):&nbsp;ID&nbsp;of&nbsp;the&nbsp;user&nbsp;to&nbsp;display<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str:&nbsp;HTML&nbsp;response&nbsp;with&nbsp;user&nbsp;name&nbsp;or&nbsp;error&nbsp;message<br>
+&nbsp;<br>
+Example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;GET&nbsp;/users/get_user_data/1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Returns:&nbsp;&lt;H1&nbsp;id='user'&gt;John&nbsp;Doe&lt;/H1&gt;</span></dd></dl>
+ <dl><dt><a name="-get_user_name_from_db"><strong>get_user_name_from_db</strong></a>(user_id)</dt><dd><span class="code">Retrieve&nbsp;username&nbsp;from&nbsp;database&nbsp;by&nbsp;user&nbsp;ID.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;user_id&nbsp;(str):&nbsp;ID&nbsp;of&nbsp;the&nbsp;user&nbsp;to&nbsp;look&nbsp;up<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str&nbsp;or&nbsp;None:&nbsp;Username&nbsp;if&nbsp;found,&nbsp;None&nbsp;if&nbsp;not&nbsp;found</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>app</strong> = &lt;fastapi.applications.FastAPI object&gt;<br>
+<strong>db</strong> = &lt;db_connector.Database object&gt;</td></tr></table>
+</body></html>

@@ -1,6 +1,25 @@
+"""
+Backend Testing Module
+
+This module provides comprehensive testing for the REST API backend.
+It includes tests for user creation, retrieval, and database verification.
+
+Test Functions:
+    - clear_users_data(): Clear all user data from database
+    - test_create_user(): Test POST user creation endpoint
+    - test_get_new_user(): Test GET all users endpoint
+    - test_get_user_by_id(): Test GET specific user endpoint
+    - verify_user_in_db(): Verify user exists in database
+
+Configuration:
+    REST API URL: http://127.0.0.1:5000/users
+
+Usage:
+    python backend_testing.py
+"""
+
 from db_connector import Database
 import requests
-import json
 
 url = "http://127.0.0.1:5000/users"
 
@@ -9,7 +28,14 @@ headers = {
 }
 
 def clear_users_data():
-    """Clear all data from the users table without dropping it"""
+    """Clear all data from the users table without dropping it.
+
+    Connects to the database and executes a DELETE statement to remove
+    all records from the users table while preserving the table structure.
+
+    Raises:
+        Exception: If database operation fails
+    """
     db = Database()
     conn = db.get_connection()
     cursor = conn.cursor()
@@ -25,6 +51,17 @@ def clear_users_data():
         conn.close()
         
 def test_create_user():
+    """Test user creation via POST request to REST API.
+
+    Creates a test user and validates the API response contains
+    the expected fields and values.
+
+    Returns:
+        requests.Response or None: API response if successful, None if failed
+
+    Raises:
+        AssertionError: If API response validation fails
+    """
     user_data = {
         "user_name": "Test User"
     }
@@ -51,6 +88,17 @@ def test_create_user():
 
 
 def test_get_new_user():
+    """Test retrieval of all users via GET request.
+
+    Makes a GET request to retrieve all users and validates
+    the response structure.
+
+    Returns:
+        requests.Response or None: API response if successful, None if failed
+
+    Raises:
+        AssertionError: If API response validation fails
+    """
     try:
         response = requests.get(url, headers=headers)
         print(f"Status Code: {response.status_code}")
@@ -71,7 +119,17 @@ def test_get_new_user():
         return None
 
 def test_get_user_by_id(user_id):
-    """Get specific user by ID"""
+    """Test retrieval of specific user by ID.
+
+    Args:
+        user_id (int): ID of the user to retrieve
+
+    Returns:
+        requests.Response or None: API response if successful, None if failed
+
+    Raises:
+        AssertionError: If API response validation fails
+    """
     get_url = f"http://127.0.0.1:5000/users/{user_id}"
 
     try:
@@ -93,7 +151,17 @@ def test_get_user_by_id(user_id):
         return None
 
 def verify_user_in_db(user_name):
-    """Verify user exists in database"""
+    """Verify user exists in database using direct SQL query.
+
+    Args:
+        user_name (str): Username to search for in database
+
+    Returns:
+        bool: True if user found and verified, False otherwise
+
+    Raises:
+        AssertionError: If user not found or data doesn't match
+    """
     db = Database()
     conn = db.get_connection()
     cursor = conn.cursor()

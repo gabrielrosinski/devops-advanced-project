@@ -1,3 +1,31 @@
+"""
+REST API Application
+
+FastAPI-based REST API for user management with CRUD operations.
+Provides endpoints for creating, reading, updating, and deleting user records.
+
+Endpoints:
+    POST /users - Create a new user
+    GET /users - Retrieve all users
+    GET /users/{user_id} - Retrieve specific user by ID
+    PUT /users/{user_id} - Update user information
+    DELETE /users/{user_id} - Delete user by ID
+
+Dependencies:
+    - FastAPI: Web framework
+    - Pydantic: Data validation
+    - uvicorn: ASGI server
+    - Database: Custom database connector
+
+Environment Variables:
+    HOST: Server host address (default: 0.0.0.0)
+    PORT: Server port (default: 5000)
+    RELOAD: Enable auto-reload in development (default: true)
+
+Usage:
+    python rest_app.py
+"""
+
 import os
 from fastapi import FastAPI, Depends
 from pydantic import BaseModel
@@ -12,6 +40,11 @@ load_dotenv()
 db = Database()
 
 def get_db():
+    """Database dependency for FastAPI dependency injection.
+
+    Yields:
+        pymysql.Connection: Database connection that auto-closes after request
+    """
     connection = db.get_connection()
     try:
         yield connection
@@ -25,12 +58,32 @@ RELOAD = os.getenv("RELOAD", "true").lower() == "true"
 app = FastAPI()
 
 class User(BaseModel):
+    """User data model for request/response validation.
+
+    Attributes:
+        user_name (str): Name of the user
+        created_at (Optional[datetime]): Timestamp when user was created
+        updated_at (Optional[datetime]): Timestamp when user was last updated
+    """
     user_name: str
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
 @app.post("/users")
 async def create_user(user: User, conn = Depends(get_db)):
+    """Create a new user.
+
+    Args:
+        user (User): User data from request body
+        conn: Database connection from dependency injection
+
+    Returns:
+        dict: Success message with user_id and user_name
+
+    Example:
+        POST /users
+        {"user_name": "John Doe"}
+    """
     cursor = conn.cursor()
     try:
         cursor.execute("INSERT INTO users (user_name, created_at) VALUES (%s, NOW())", (user.user_name,))
@@ -42,6 +95,17 @@ async def create_user(user: User, conn = Depends(get_db)):
 
 @app.get("/users")
 async def get_all_users(conn = Depends(get_db)):
+    """Retrieve all users from the database.
+
+    Args:
+        conn: Database connection from dependency injection
+
+    Returns:
+        dict: Dictionary containing list of all users
+
+    Example:
+        GET /users
+    """
     cursor = conn.cursor()
     try:
         cursor.execute("SELECT * FROM users")
@@ -52,6 +116,18 @@ async def get_all_users(conn = Depends(get_db)):
 
 @app.get("/users/{user_id}")
 async def get_user(user_id: int, conn = Depends(get_db)):
+    """Retrieve a specific user by ID.
+
+    Args:
+        user_id (int): ID of the user to retrieve
+        conn: Database connection from dependency injection
+
+    Returns:
+        dict: User data or error message if not found
+
+    Example:
+        GET /users/1
+    """
     cursor = conn.cursor()
     try:
         cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
@@ -63,7 +139,21 @@ async def get_user(user_id: int, conn = Depends(get_db)):
         cursor.close()
 
 @app.put("/users/{user_id}")
-async def update_user_name(user_id: int,user: User, conn = Depends(get_db)):
+async def update_user_name(user_id: int, user: User, conn = Depends(get_db)):
+    """Update user information.
+
+    Args:
+        user_id (int): ID of the user to update
+        user (User): Updated user data from request body
+        conn: Database connection from dependency injection
+
+    Returns:
+        dict: Success message or error if user not found
+
+    Example:
+        PUT /users/1
+        {"user_name": "Jane Doe"}
+    """
     cursor = conn.cursor()
     try:
         cursor.execute("UPDATE users SET user_name = %s, updated_at = NOW() WHERE id = %s", (user.user_name, user_id))
@@ -76,6 +166,18 @@ async def update_user_name(user_id: int,user: User, conn = Depends(get_db)):
 
 @app.delete("/users/{user_id}")
 async def delete_user(user_id: int, conn = Depends(get_db)):
+    """Delete a user by ID.
+
+    Args:
+        user_id (int): ID of the user to delete
+        conn: Database connection from dependency injection
+
+    Returns:
+        dict: Success message or error if user not found
+
+    Example:
+        DELETE /users/1
+    """
     cursor = conn.cursor()
     try:
         cursor.execute("DELETE FROM users WHERE id = %s", (user_id))

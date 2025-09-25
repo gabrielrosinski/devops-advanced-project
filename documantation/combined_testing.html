@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module combined_testing</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">combined_testing</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/mnt/c/Devops%20projects/devops-advanced-project/combined_testing.py">/mnt/c/Devops projects/devops-advanced-project/combined_testing.py</a></td></tr></table>
+    <p><span class="code">Combined&nbsp;Testing&nbsp;Module<br>
+&nbsp;<br>
+This&nbsp;module&nbsp;provides&nbsp;end-to-end&nbsp;testing&nbsp;for&nbsp;a&nbsp;FastAPI&nbsp;REST&nbsp;API&nbsp;and&nbsp;web&nbsp;interface.<br>
+It&nbsp;performs&nbsp;complete&nbsp;user&nbsp;lifecycle&nbsp;testing&nbsp;from&nbsp;API&nbsp;creation&nbsp;to&nbsp;web&nbsp;verification.<br>
+&nbsp;<br>
+Test&nbsp;Flow:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;POST&nbsp;new&nbsp;user&nbsp;data&nbsp;to&nbsp;REST&nbsp;API<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;GET&nbsp;user&nbsp;data&nbsp;to&nbsp;verify&nbsp;it&nbsp;matches&nbsp;posted&nbsp;data<br>
+&nbsp;&nbsp;&nbsp;&nbsp;3.&nbsp;Verify&nbsp;user&nbsp;exists&nbsp;in&nbsp;database&nbsp;using&nbsp;direct&nbsp;SQL&nbsp;query<br>
+&nbsp;&nbsp;&nbsp;&nbsp;4.&nbsp;Start&nbsp;Selenium&nbsp;WebDriver&nbsp;session<br>
+&nbsp;&nbsp;&nbsp;&nbsp;5.&nbsp;Navigate&nbsp;to&nbsp;web&nbsp;interface&nbsp;using&nbsp;user&nbsp;ID<br>
+&nbsp;&nbsp;&nbsp;&nbsp;6.&nbsp;Verify&nbsp;username&nbsp;is&nbsp;correctly&nbsp;displayed&nbsp;on&nbsp;web&nbsp;page<br>
+&nbsp;<br>
+Dependencies:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;requests:&nbsp;HTTP&nbsp;client&nbsp;for&nbsp;API&nbsp;testing<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;selenium:&nbsp;Web&nbsp;browser&nbsp;automation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;webdriver_manager:&nbsp;Automatic&nbsp;WebDriver&nbsp;management<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Database:&nbsp;Custom&nbsp;database&nbsp;connector<br>
+&nbsp;<br>
+Configuration:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;REST&nbsp;API:&nbsp;<a href="http://127.0.0.1:5000/users">http://127.0.0.1:5000/users</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;Web&nbsp;Interface:&nbsp;<a href="http://127.0.0.1:5001/users/get_user_data">http://127.0.0.1:5001/users/get_user_data</a><br>
+&nbsp;<br>
+Usage:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;python&nbsp;combined_testing.py</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="selenium.webdriver.support.expected_conditions.html">selenium.webdriver.support.expected_conditions</a><br>
+</td><td class="multicolumn"><a href="requests.html">requests</a><br>
+</td><td class="multicolumn"><a href="selenium.webdriver.html">selenium.webdriver</a><br>
+</td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-clear_users_data"><strong>clear_users_data</strong></a>()</dt><dd><span class="code">Clear&nbsp;all&nbsp;user&nbsp;data&nbsp;from&nbsp;the&nbsp;database.<br>
+&nbsp;<br>
+Connects&nbsp;to&nbsp;the&nbsp;database&nbsp;and&nbsp;deletes&nbsp;all&nbsp;records&nbsp;from&nbsp;the&nbsp;users&nbsp;table<br>
+without&nbsp;dropping&nbsp;the&nbsp;table&nbsp;structure.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Exception:&nbsp;If&nbsp;database&nbsp;connection&nbsp;or&nbsp;query&nbsp;fails</span></dd></dl>
+ <dl><dt><a name="-combined_test"><strong>combined_test</strong></a>()</dt><dd><span class="code">Execute&nbsp;the&nbsp;complete&nbsp;6-step&nbsp;end-to-end&nbsp;test&nbsp;suite.<br>
+&nbsp;<br>
+Performs&nbsp;the&nbsp;following&nbsp;test&nbsp;sequence:<br>
+1.&nbsp;POST&nbsp;new&nbsp;user&nbsp;to&nbsp;REST&nbsp;API<br>
+2.&nbsp;GET&nbsp;user&nbsp;data&nbsp;to&nbsp;verify&nbsp;it&nbsp;matches&nbsp;posted&nbsp;data<br>
+3.&nbsp;Verify&nbsp;user&nbsp;exists&nbsp;in&nbsp;database&nbsp;using&nbsp;direct&nbsp;SQL&nbsp;query<br>
+4.&nbsp;Start&nbsp;Selenium&nbsp;WebDriver&nbsp;session<br>
+5.&nbsp;Navigate&nbsp;to&nbsp;web&nbsp;interface&nbsp;using&nbsp;user&nbsp;ID<br>
+6.&nbsp;Verify&nbsp;username&nbsp;is&nbsp;correctly&nbsp;displayed&nbsp;on&nbsp;web&nbsp;page<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool:&nbsp;True&nbsp;if&nbsp;all&nbsp;tests&nbsp;pass,&nbsp;False&nbsp;otherwise<br>
+&nbsp;<br>
+Example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;success&nbsp;=&nbsp;<a href="#-combined_test">combined_test</a>()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;print("All&nbsp;tests&nbsp;passed!"&nbsp;if&nbsp;success&nbsp;else&nbsp;"Tests&nbsp;failed!")</span></dd></dl>
+ <dl><dt><a name="-get_user_by_id"><strong>get_user_by_id</strong></a>(user_id)</dt><dd><span class="code">Retrieve&nbsp;user&nbsp;data&nbsp;by&nbsp;ID&nbsp;via&nbsp;REST&nbsp;API&nbsp;GET&nbsp;request.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;user_id&nbsp;(int):&nbsp;The&nbsp;ID&nbsp;of&nbsp;the&nbsp;user&nbsp;to&nbsp;retrieve<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;Database&nbsp;record&nbsp;tuple&nbsp;(id,&nbsp;name,&nbsp;created_at,&nbsp;updated_at)<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;AssertionError:&nbsp;If&nbsp;API&nbsp;response&nbsp;is&nbsp;invalid&nbsp;or&nbsp;user&nbsp;not&nbsp;found<br>
+&nbsp;<br>
+Example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;user_data&nbsp;=&nbsp;<a href="#-get_user_by_id">get_user_by_id</a>(1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;print(f"User:&nbsp;{user_data[1]}")</span></dd></dl>
+ <dl><dt><a name="-navigate_to_web_interface"><strong>navigate_to_web_interface</strong></a>(driver, user_id)</dt><dd><span class="code">Navigate&nbsp;to&nbsp;the&nbsp;web&nbsp;interface&nbsp;for&nbsp;a&nbsp;specific&nbsp;user.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;driver:&nbsp;Selenium&nbsp;WebDriver&nbsp;instance<br>
+&nbsp;&nbsp;&nbsp;&nbsp;user_id&nbsp;(int):&nbsp;ID&nbsp;of&nbsp;the&nbsp;user&nbsp;to&nbsp;view&nbsp;in&nbsp;web&nbsp;interface<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;TimeoutException:&nbsp;If&nbsp;page&nbsp;doesn't&nbsp;load&nbsp;within&nbsp;10&nbsp;seconds<br>
+&nbsp;<br>
+Example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;<a href="#-navigate_to_web_interface">navigate_to_web_interface</a>(driver,&nbsp;1)</span></dd></dl>
+ <dl><dt><a name="-post_new_user"><strong>post_new_user</strong></a>(user_name)</dt><dd><span class="code">Create&nbsp;a&nbsp;new&nbsp;user&nbsp;via&nbsp;REST&nbsp;API&nbsp;POST&nbsp;request.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;user_name&nbsp;(str):&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;user&nbsp;to&nbsp;create<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;A&nbsp;tuple&nbsp;containing&nbsp;(user_id,&nbsp;user_name)<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;AssertionError:&nbsp;If&nbsp;API&nbsp;response&nbsp;is&nbsp;invalid&nbsp;or&nbsp;status&nbsp;code&nbsp;!=&nbsp;200<br>
+&nbsp;<br>
+Example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;user_id,&nbsp;name&nbsp;=&nbsp;<a href="#-post_new_user">post_new_user</a>("John&nbsp;Doe")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;print(f"Created&nbsp;user&nbsp;{name}&nbsp;with&nbsp;ID&nbsp;{user_id}")</span></dd></dl>
+ <dl><dt><a name="-start_selenium_session"><strong>start_selenium_session</strong></a>()</dt><dd><span class="code">Initialize&nbsp;and&nbsp;configure&nbsp;Chrome&nbsp;WebDriver&nbsp;for&nbsp;automated&nbsp;testing.<br>
+&nbsp;<br>
+Configures&nbsp;Chrome&nbsp;with&nbsp;headless&nbsp;mode&nbsp;and&nbsp;other&nbsp;CI-friendly&nbsp;options.<br>
+Automatically&nbsp;manages&nbsp;ChromeDriver&nbsp;installation.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;webdriver.Chrome:&nbsp;Configured&nbsp;Chrome&nbsp;WebDriver&nbsp;instance<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Exception:&nbsp;If&nbsp;WebDriver&nbsp;initialization&nbsp;fails<br>
+&nbsp;<br>
+Example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;driver&nbsp;=&nbsp;<a href="#-start_selenium_session">start_selenium_session</a>()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;driver.get("<a href="https://example.com">https://example.com</a>")</span></dd></dl>
+ <dl><dt><a name="-verify_user_in_database"><strong>verify_user_in_database</strong></a>(user_name)</dt><dd><span class="code">Verify&nbsp;user&nbsp;exists&nbsp;in&nbsp;database&nbsp;using&nbsp;direct&nbsp;database&nbsp;query.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;user_name&nbsp;(str):&nbsp;The&nbsp;username&nbsp;to&nbsp;search&nbsp;for&nbsp;in&nbsp;the&nbsp;database<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tuple:&nbsp;Database&nbsp;record&nbsp;if&nbsp;found<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;AssertionError:&nbsp;If&nbsp;user&nbsp;not&nbsp;found&nbsp;in&nbsp;database<br>
+&nbsp;<br>
+Example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;record&nbsp;=&nbsp;<a href="#-verify_user_in_database">verify_user_in_database</a>("John&nbsp;Doe")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;print(f"Found&nbsp;user:&nbsp;{record}")</span></dd></dl>
+ <dl><dt><a name="-verify_user_name_on_web"><strong>verify_user_name_on_web</strong></a>(driver, expected_name)</dt><dd><span class="code">Verify&nbsp;the&nbsp;displayed&nbsp;username&nbsp;matches&nbsp;expected&nbsp;value&nbsp;on&nbsp;web&nbsp;page.<br>
+&nbsp;<br>
+Locates&nbsp;the&nbsp;H1&nbsp;element&nbsp;with&nbsp;id='user'&nbsp;and&nbsp;compares&nbsp;its&nbsp;text&nbsp;content<br>
+with&nbsp;the&nbsp;expected&nbsp;username.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;driver:&nbsp;Selenium&nbsp;WebDriver&nbsp;instance<br>
+&nbsp;&nbsp;&nbsp;&nbsp;expected_name&nbsp;(str):&nbsp;The&nbsp;expected&nbsp;username&nbsp;to&nbsp;verify<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;AssertionError:&nbsp;If&nbsp;displayed&nbsp;name&nbsp;doesn't&nbsp;match&nbsp;expected&nbsp;name<br>
+&nbsp;&nbsp;&nbsp;&nbsp;TimeoutException:&nbsp;If&nbsp;user&nbsp;element&nbsp;not&nbsp;found&nbsp;within&nbsp;10&nbsp;seconds<br>
+&nbsp;<br>
+Example:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;&gt;&gt;&nbsp;<a href="#-verify_user_name_on_web">verify_user_name_on_web</a>(driver,&nbsp;"John&nbsp;Doe")</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>HEADERS</strong> = {'Content-Type': 'application/json'}<br>
+<strong>REST_URL</strong> = 'http://127.0.0.1:5000/users'<br>
+<strong>WEB_URL</strong> = 'http://127.0.0.1:5001/users/get_user_data'</td></tr></table>
+</body></html>
