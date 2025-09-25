@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from dotenv import load_dotenv
-from db.db_connector import Database
+from db_connector import Database
 import uvicorn                                                                                                                                                                                           
                                                                                                                                                                                                                             
 load_dotenv()                                                                                                                                                                                                               
@@ -21,7 +21,7 @@ def get_user_name_from_db(user_id):
         cursor.close()
         conn.close()
 
-@app.post("/users/get_user_data/{user_id}", response_class=HTMLResponse)
+@app.get("/users/get_user_data/{user_id}", response_class=HTMLResponse)
 def get_user_data(user_id: str):
     user_name = get_user_name_from_db(user_id)
     if user_name is None:

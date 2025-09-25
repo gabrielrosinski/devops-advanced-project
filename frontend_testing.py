@@ -59,16 +59,7 @@ def test_user_interface(user_id):
         # Close the browser
         driver.quit()
 
-
-# if __name__ == "__main__":
-#     # Test with a sample user ID
-#     test_user_id = input("Enter user ID to test (or press Enter for default '1'): ").strip()
-#     if not test_user_id:
-#         test_user_id = "1"
-
-#     test_user_interface(test_user_id)
-
 if __name__ == "__main__":
     # Use environment variable or default for automation
-    test_user_id = os.getenv("TEST_USER_ID", "1")
+    test_user_id = os.getenv("Test User", "1")
     test_user_interface(test_user_id)

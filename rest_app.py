@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import uvicorn
-from db.db_connector import Database
+from db_connector import Database
 from typing import Optional
 from datetime import datetime
 
