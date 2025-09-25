@@ -180,7 +180,7 @@ async def delete_user(user_id: int, conn = Depends(get_db)):
     """
     cursor = conn.cursor()
     try:
-        cursor.execute("DELETE FROM users WHERE id = %s", (user_id))
+        cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
         conn.commit()
         if cursor.rowcount == 0:
             return {"error": "User not found"}

@@ -68,7 +68,7 @@ class Database:
                 raise Exception("Failed to establish database connection")
                 
             with conn.cursor() as cursor:
-                cursor.execute("SHOW TABLES LIKE 'users'")
+                cursor.execute("SHOW TABLES LIKE %s", ('users',))
                 table_exists = cursor.fetchone()
                 if table_exists is not None:
                     return conn
@@ -123,8 +123,13 @@ class Database:
         
         try:
             with self.admin_connection.cursor() as cursor:
-                cursor.execute(f"CREATE USER IF NOT EXISTS '{username}'@'{host}' IDENTIFIED BY '{password}'")
-                cursor.execute(f"GRANT ALL PRIVILEGES ON *.* TO '{username}'@'{host}' WITH GRANT OPTION")
+                # Use prepared statements for user creation
+                create_user_query = "CREATE USER IF NOT EXISTS %s@%s IDENTIFIED BY %s"
+                cursor.execute(create_user_query, (username, host, password))
+
+                grant_privileges_query = "GRANT ALL PRIVILEGES ON *.* TO %s@%s WITH GRANT OPTION"
+                cursor.execute(grant_privileges_query, (username, host))
+
                 cursor.execute("FLUSH PRIVILEGES")
                 self.admin_connection.commit()
                 print(f"Root user '{username}' created successfully")
@@ -149,8 +154,9 @@ class Database:
         
         try:
             with self.admin_connection.cursor() as cursor:
-                cursor.execute(f"CREATE DATABASE IF NOT EXISTS {database_name}")
-                cursor.execute(f"USE {database_name}")
+                # Use prepared statements for database operations
+                cursor.execute("CREATE DATABASE IF NOT EXISTS %s", (database_name,))
+                cursor.execute("USE %s", (database_name,))
                 
                 if schema_file and os.path.exists(schema_file):
                     with open(schema_file, 'r') as f:

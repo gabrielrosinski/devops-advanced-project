@@ -18,7 +18,7 @@ try:
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )
     """)
-    cursor.execute("INSERT INTO users (user_name) VALUES ('Test User')")
+    cursor.execute("INSERT INTO users (user_name) VALUES (%s)", ('Test User',))
     conn.commit()
     print("Test database setup complete - User ID 1 created")
 finally:
