@@ -5,7 +5,8 @@ A FastAPI-based REST application that provides CRUD endpoints for user managemen
 ## Project Structure
 
 ```
-├── rest_app.py          # Main FastAPI application
+├── rest_app.py          # Main FastAPI REST API application
+├── web_app.py           # Web application with HTML responses
 ├── db_connector.py      # Database connection and initialization
 ├── pyproject.toml       # Poetry configuration with dependencies
 ├── requirements.txt     # Pip requirements (legacy)
@@ -149,7 +150,17 @@ docker ps | grep mysql
 
 #### Using Poetry:
 ```bash
-poetry run python rest_app.py
+poetry run python3 rest_app.py
+```
+
+**If you encounter "python command not found" with Poetry, try:**
+```bash
+# Option 1: Activate Poetry shell first
+poetry shell
+python3 rest_app.py
+
+# Option 2: Use virtual environment directly
+.venv/bin/python3 rest_app.py
 ```
 
 #### Using pip:

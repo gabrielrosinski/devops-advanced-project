@@ -2,10 +2,22 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "FastAPI Poetry",
+      "name": "Server",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/rest_app.py",
+      "program": "${workspaceFolder}/server/rest_app.py",
+      "python": "${workspaceFolder}/.venv/bin/python",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "purpose": ["debug-in-terminal"]
+    },
+    {
+      "name": "Web UI",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/server/web_app.py",
       "python": "${workspaceFolder}/.venv/bin/python",
       "console": "integratedTerminal",
       "justMyCode": true,

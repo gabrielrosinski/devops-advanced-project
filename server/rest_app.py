@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import uvicorn
-from db_connector import Database
+from db.db_connector import Database
 from typing import Optional
 from datetime import datetime
 
@@ -93,3 +93,43 @@ if __name__ == "__main__":
         port=PORT,
         reload=RELOAD
     )
+    
+    
+    
+# > where we need to have the .env vars while using github action. in github secret ?
+
+# ● Yes, for GitHub Actions you should store environment variables as GitHub Secrets. Here's how:
+
+#   GitHub Secrets Setup
+
+#   1. Repository Settings → Secrets and variables → Actions
+#   2. Add repository secrets for each environment variable:
+#     - HOST
+#     - WEB_PORT
+#     - PORT
+#     - DB_HOST
+#     - DB_USER
+#     - DB_PASSWORD
+#     - Any other .env variables
+
+#   GitHub Actions Workflow
+
+#   In your .github/workflows/*.yml file:
+
+#   jobs:
+#     test:
+#       runs-on: ubuntu-latest
+#       env:
+#         HOST: ${{ secrets.HOST }}
+#         WEB_PORT: ${{ secrets.WEB_PORT }}
+#         PORT: ${{ secrets.PORT }}
+#         DB_HOST: ${{ secrets.DB_HOST }}
+#         DB_USER: ${{ secrets.DB_USER }}
+#         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+#       steps:
+#         - uses: actions/checkout@v4
+#         - name: Run tests
+#           run: poetry run python test/frontend_testing.py
+
+#   Never commit .env files to the repository - GitHub Secrets keep sensitive data secure in CI/CD pipelines.   
