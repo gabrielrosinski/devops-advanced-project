@@ -1,45 +1,75 @@
-# FastAPI User Management REST API
+# FastAPI User Management Application Suite
 
-A FastAPI-based REST application that provides CRUD endpoints for user management with MySQL database integration.
+A comprehensive FastAPI-based application suite with REST API, web interface, database management, and automated testing capabilities.
+
+## Project Overview
+
+This project consists of multiple interconnected applications:
+
+- **REST API Server** (`rest_app.py`) - Full CRUD operations for user management
+- **Web Interface** (`web_app.py`) - HTML frontend for displaying user data
+- **Database Layer** (`db_connector.py`) - MySQL connection and operations
+- **Testing Suite** - Comprehensive backend, frontend, and end-to-end testing
+- **Configuration Management** - Database-driven test configuration
 
 ## Project Structure
 
 ```
-├── rest_app.py          # Main FastAPI REST API application
-├── web_app.py           # Web application with HTML responses
-├── db_connector.py      # Database connection and initialization
-├── pyproject.toml       # Poetry configuration with dependencies
-├── requirements.txt     # Pip requirements (legacy)
-├── .env                 # Environment variables configuration
-└── README.md           # This file
+├── rest_app.py           # REST API server (port 5000)
+├── web_app.py            # Web interface server (port 5001)
+├── db_connector.py       # Database connection and operations
+├── setup_test_db.py      # Database initialization and test data
+├── backend_testing.py    # REST API testing
+├── frontend_testing.py   # Web interface testing (Selenium)
+├── combined_testing.py   # End-to-end testing
+├── requirements.txt      # Python dependencies
+├── .env                  # Environment configuration
+├── CLAUDE.md            # Development guidance
+└── README.md            # This file
 ```
 
-## Prerequisites
+## Requirements
 
-Before running the application, ensure you have the following installed:
-
+### System Requirements
 - **Python 3.9+**
-- **MySQL Server** (version 5.7+ or 8.0+)
-- **Poetry** (recommended) or **pip** for dependency management
-- **Minikube** (optional, for Kubernetes deployment)
+- **Docker** (for MySQL container)
+- **Docker Compose** (optional, recommended)
 
-## Environment Setup
+### Browser Requirements (for testing)
+- **Chrome** or **Firefox** (automatically managed by WebDriver)
 
-### 1. Install Python Dependencies
+## Environment Configuration
 
-#### Option A: Using Poetry (Recommended)
+### 1. Create .env File
+
+Create a `.env` file in the project root with the following configuration:
+
 ```bash
-# Install Poetry if not already installed
-curl -sSL https://install.python-poetry.org | python3 -
+# Database Configuration
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=black
+DB_NAME=users_db
+DB_ROOT_USER=root
+DB_ROOT_PASSWORD=black
 
-# Install project dependencies
-poetry install
+# REST API Configuration
+HOST=0.0.0.0
+PORT=5000
+RELOAD=true
 
-# Activate virtual environment
-poetry shell
+# Web Interface Configuration
+WEB_PORT=5001
+
+# Testing Configuration
+Test User=1
 ```
 
-#### Option B: Using pip (Legacy)
+**Important:** Ensure the database passwords match your MySQL container configuration.
+
+## Dependency Installation
+
+### Option A: Using pip (Current Setup)
 ```bash
 # Create virtual environment
 python -m venv venv
@@ -54,22 +84,14 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 2. MySQL Database Setup with Docker
+## MySQL Database Setup
 
-#### Install Docker and Docker Compose
+### 1. Install Docker
 
 **On Ubuntu/Debian:**
 ```bash
 sudo apt update
 sudo apt install docker.io docker-compose
-sudo systemctl start docker
-sudo systemctl enable docker
-sudo usermod -aG docker $USER
-```
-
-**On CentOS/RHEL:**
-```bash
-sudo yum install docker docker-compose
 sudo systemctl start docker
 sudo systemctl enable docker
 sudo usermod -aG docker $USER
@@ -84,16 +106,9 @@ brew install --cask docker
 **On Windows:**
 Download and install Docker Desktop from [official website](https://www.docker.com/products/docker-desktop/)
 
-#### Start MySQL Container
+### 2. Start MySQL Container
 
-**Option A: Using Docker Compose (Recommended)**
-
-Create a `docker-compose.yml` file (already provided in the project):
-```bash
-docker-compose up -d mysql
-```
-
-**Option B: Using Docker Command**
+**Option A: Using Docker Command**
 ```bash
 docker run -d \
   --name mysql-container \
@@ -103,10 +118,15 @@ docker run -d \
   mysql:8.0
 ```
 
-#### Verify MySQL Container
+**Option B: Using Docker Compose (if available)**
+```bash
+docker-compose up -d mysql
+```
+
+### 3. Verify MySQL Container
 ```bash
 # Check if container is running
-docker ps
+docker ps | grep mysql
 
 # Check MySQL logs
 docker logs mysql-container
@@ -115,78 +135,186 @@ docker logs mysql-container
 docker exec -it mysql-container mysql -u root -p
 ```
 
-### 3. Environment Configuration
+## Database Initialization
 
-Copy and configure the environment variables:
+### setup_test_db.py
+
+This script initializes the database with the required tables and test data:
 
 ```bash
-# The .env file should contain:
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=black
-DB_NAME=users_db
-DB_ROOT_USER=root
-DB_ROOT_PASSWORD=black
+# Ensure MySQL container is running first
+python setup_test_db.py
 ```
 
-**Important:** Update the passwords in `.env` file to match your MySQL configuration.
+**What it does:**
+- Drops existing tables if they exist
+- Creates fresh `users` and `config` tables
+- Inserts default test data
+- Prepares database for testing
 
-## Running the Application
+### Database Schema
 
-### 1. Start MySQL Container
-Ensure MySQL Docker container is running:
-```bash
-# Using Docker Compose
-docker-compose up -d mysql
+The application uses two main tables:
 
-# Or using Docker command directly
-docker start mysql-container
-
-# Verify container is running
-docker ps | grep mysql
+#### users Table
+```sql
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 ```
 
-### 2. Run the FastAPI Application
-
-#### Using Poetry:
-```bash
-poetry run python3 rest_app.py
+#### config Table
+```sql
+CREATE TABLE config (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    api_gateway_url VARCHAR(255) NOT NULL,
+    browser_type VARCHAR(50) NOT NULL,
+    user_name VARCHAR(100) NOT NULL
+);
 ```
 
-**If you encounter "python command not found" with Poetry, try:**
-```bash
-# Option 1: Activate Poetry shell first
-poetry shell
-python3 rest_app.py
+**Default config data:**
+- `api_gateway_url`: `127.0.0.1:5001/users`
+- `browser_type`: `Chrome`
+- `user_name`: `test_user_123`
 
-# Option 2: Use virtual environment directly
-.venv/bin/python3 rest_app.py
-```
+## Running the Applications
 
-#### Using pip:
+### 1. REST API Server (rest_app.py)
+
 ```bash
+# Ensure virtual environment is activated
+source venv/bin/activate  # or venv\Scripts\activate on Windows
+
+# Start REST API server
 python rest_app.py
 ```
 
-The application will:
-- Start on `http://0.0.0.0:5000` by default
-- Automatically create the database and tables if they don't exist
-- Enable hot reload in development mode
+**Features:**
+- Runs on `http://0.0.0.0:5000` (configurable via HOST/PORT env vars)
+- Auto-reload enabled in development
+- Swagger documentation at `http://localhost:5000/docs`
+- ReDoc documentation at `http://localhost:5000/redoc`
 
-### 3. Verify the Application
+### 2. Web Interface Server (web_app.py)
 
-- **API Documentation:** http://localhost:5000/docs
-- **Alternative docs:** http://localhost:5000/redoc
-- **Health check:** Access any endpoint to verify the database connection
+```bash
+# Ensure virtual environment is activated
+source venv/bin/activate
+
+# Start web interface server
+python web_app.py
+```
+
+**Features:**
+- Runs on `http://127.0.0.1:5001` (configurable via WEB_PORT env var)
+- Serves HTML responses for user data visualization
+- Integrates with REST API for data retrieval
+
+### 3. Manual Server Management
+
+Both servers need to be running for full functionality:
+
+```bash
+# Terminal 1: Start REST API
+python rest_app.py
+
+# Terminal 2: Start Web Interface
+python web_app.py
+```
+
+## Application Descriptions
+
+### rest_app.py - REST API Server
+- **Purpose**: Provides RESTful API endpoints for user management
+- **Port**: 5000 (configurable)
+- **Features**: Full CRUD operations, data validation, automatic database connection
+- **Security**: SQL injection protection via prepared statements
+
+### web_app.py - Web Interface
+- **Purpose**: HTML frontend for displaying user data
+- **Port**: 5001 (configurable)
+- **Features**: User data visualization, error handling for missing users
+- **Integration**: Queries database directly for user information
+
+### db_connector.py - Database Layer
+- **Purpose**: Centralized database connection and operations
+- **Features**: Connection pooling, automatic database/table creation, prepared statements
+- **Methods**: `get_connection()`, `clear_data()`, database initialization
+
+## Testing Suite
+
+### Prerequisites for Testing
+1. MySQL Docker container must be running
+2. Virtual environment activated
+3. Dependencies installed
+
+### 1. Backend Testing (backend_testing.py)
+
+Tests the REST API endpoints:
+
+```bash
+python backend_testing.py
+```
+
+**Test Flow:**
+- Verifies MySQL Docker container status
+- Starts REST API server automatically
+- Tests POST, GET, PUT, DELETE operations
+- Verifies database consistency
+- Automatic server cleanup
+
+### 2. Frontend Testing (frontend_testing.py)
+
+Tests the web interface using Selenium:
+
+```bash
+python frontend_testing.py
+```
+
+**Test Flow:**
+- Initializes database with `setup_test_db.py`
+- Loads configuration from database `config` table
+- Starts web application automatically
+- Tests browser interaction (Chrome/Firefox support)
+- Verifies HTML element display
+- Database-driven test parameters
+
+### 3. Combined End-to-End Testing (combined_testing.py)
+
+Complete user lifecycle testing:
+
+```bash
+python combined_testing.py
+```
+
+**Test Flow:**
+- Starts both REST API and web interface servers
+- Creates user via API
+- Verifies user in database
+- Tests web interface display
+- Automatic server cleanup on completion/failure
 
 ## API Endpoints
 
+### REST API (port 5000)
+
+| Method | Endpoint | Description | Example |
+|--------|----------|-------------|---------|
+| POST | `/users` | Create a new user | `{"user_name": "john_doe"}` |
+| GET | `/users` | Get all users | Returns list of all users |
+| GET | `/users/{user_id}` | Get specific user by ID | `/users/1` |
+| PUT | `/users/{user_id}` | Update user information | `{"user_name": "jane_doe"}` |
+| DELETE | `/users/{user_id}` | Delete user by ID | `/users/1` |
+
+### Web Interface (port 5001)
+
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/users` | Create a new user |
-| GET | `/users/{user_id}` | Get user by ID |
-| PUT | `/users/{user_id}` | Update user information |
-| DELETE | `/users/{user_id}` | Delete user by ID |
+| GET | `/users/get_user_data/{user_id}` | Display user as HTML |
 
 ### Example API Usage
 
@@ -202,116 +330,91 @@ curl -X POST "http://localhost:5000/users" \
 curl -X GET "http://localhost:5000/users/1"
 ```
 
-## Database Schema
-
-The application automatically creates a `users` table with the following structure:
-
-```sql
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_name VARCHAR(50) UNIQUE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-```
-
-## Configuration Options
-
-Environment variables can be set to customize the application:
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `HOST` | `0.0.0.0` | Server host address |
-| `PORT` | `5000` | Server port |
-| `RELOAD` | `true` | Enable hot reload |
-| `DB_HOST` | `localhost` | MySQL host |
-| `DB_USER` | `root` | MySQL username |
-| `DB_PASSWORD` | `password` | MySQL password |
-| `DB_NAME` | `users_db` | Database name |
-
-## Minikube Setup (Optional)
-
-If you plan to deploy on Kubernetes using Minikube:
-
-### 1. Install Minikube
+**Update a user:**
 ```bash
-# On Linux
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-sudo install minikube-linux-amd64 /usr/local/bin/minikube
-
-# On macOS
-brew install minikube
-
-# On Windows
-choco install minikube
+curl -X PUT "http://localhost:5000/users/1" \
+     -H "Content-Type: application/json" \
+     -d '{"user_name": "jane_doe"}'
 ```
 
-### 2. Start Minikube
+**Delete a user:**
 ```bash
-minikube start
-minikube dashboard  # Optional: Access Kubernetes dashboard
+curl -X DELETE "http://localhost:5000/users/1"
 ```
 
-### 3. Deploy MySQL in Minikube
-```bash
-# Deploy MySQL (you'll need to create Kubernetes manifests)
-kubectl create deployment mysql --image=mysql:8.0
-kubectl set env deployment/mysql MYSQL_ROOT_PASSWORD=black
-kubectl set env deployment/mysql MYSQL_DATABASE=users_db
-kubectl expose deployment mysql --port=3306
-```
+## Dependencies
+
+### Core Dependencies
+- `fastapi[standard]==0.116.1` - Web framework
+- `uvicorn==0.32.0` - ASGI server
+- `pydantic==2.9.2` - Data validation
+- `pymysql==1.1.1` - MySQL database driver
+- `python-dotenv` - Environment variable loading
+
+### Testing Dependencies
+- `requests==2.31.0` - HTTP client for API testing
+- `selenium==4.34.2` - Web browser automation
+- `webdriver-manager==4.0.2` - Automatic WebDriver management
+
+## Key Features
+
+### Security Enhancements
+- **SQL Injection Protection**: All database queries use prepared statements
+- **Input Validation**: Pydantic models ensure data integrity
+- **Environment Variables**: Sensitive data stored in `.env` file
+
+### Configuration Management
+- **Database-Driven Testing**: Test parameters stored in `config` table
+- **Dynamic Browser Support**: Chrome and Firefox support
+- **Flexible Configuration**: Environment variables for all settings
+
+### Automation Features
+- **Auto-Initialization**: Tests automatically set up databases and servers
+- **Docker Integration**: MySQL container status verification
+- **Process Management**: Automatic server startup and cleanup
+- **Comprehensive Testing**: Backend, frontend, and end-to-end coverage
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Database Connection Failed:**
-   - Verify MySQL container is running: `docker ps | grep mysql`
+1. **MySQL Connection Failed:**
+   - Verify container is running: `docker ps | grep mysql`
    - Check credentials in `.env` file
-   - Restart MySQL container: `docker restart mysql-container`
-   - Check container logs: `docker logs mysql-container`
+   - Restart container: `docker restart mysql-container`
+   - Check logs: `docker logs mysql-container`
 
 2. **Port Already in Use:**
-   - Change the `PORT` environment variable
+   - Change PORT/WEB_PORT in `.env` file
    - Kill existing processes: `lsof -ti:5000 | xargs kill -9`
 
 3. **Module Import Errors:**
    - Ensure virtual environment is activated
-   - Reinstall dependencies: `poetry install` or `pip install -r requirements.txt`
+   - Reinstall dependencies: `pip install -r requirements.txt`
 
-4. **Permission Denied:**
-   - Check MySQL user privileges
-   - Run MySQL secure installation: `sudo mysql_secure_installation`
+4. **Browser Driver Issues:**
+   - WebDriver Manager automatically downloads drivers
+   - Ensure Chrome or Firefox is installed
+   - Check firewall/antivirus blocking downloads
+
+5. **Test Database Issues:**
+   - Run `setup_test_db.py` to reset database
+   - Verify MySQL container has proper permissions
+   - Check database name matches `.env` configuration
 
 ### Logs and Debugging
 
-- Application logs are displayed in the console
-- MySQL logs location (varies by system):
-  - Linux: `/var/log/mysql/error.log`
-  - macOS: `/usr/local/var/mysql/*.err`
-  - Windows: `C:\ProgramData\MySQL\MySQL Server 8.0\Data\*.err`
+- Application logs are displayed in console
+- MySQL container logs: `docker logs mysql-container`
+- Enable debug mode by setting `RELOAD=true` in `.env`
 
-## Development
+## Development Notes
 
-### Dependencies
-
-**Core Dependencies:**
-- `fastapi[standard]==0.116.1` - Web framework
-- `uvicorn==0.32.0` - ASGI server
-- `pydantic==2.9.2` - Data validation
-- `pymysql==1.1.1` - MySQL database driver
-
-**Additional Dependencies:**
-- `requests==2.31.0` - HTTP client
-- `selenium==4.34.2` - Web automation
-- `webdriver-manager==4.0.2` - WebDriver management
-- `python-dotenv` - Environment variable loading
-
-### Code Structure
-
-- **rest_app.py**: Main FastAPI application with route definitions
-- **db_connector.py**: Database connection management and initialization
-- **User Model**: Pydantic model for user data validation
+- All applications load environment variables from `.env` file
+- MySQL Docker container must be running for all operations
+- Testing framework automatically manages server lifecycles
+- Configuration-driven approach eliminates hardcoded values
+- Prepared statements protect against SQL injection attacks
 
 ## License
 

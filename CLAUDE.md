@@ -4,7 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a FastAPI-based REST application (`rest_app.py`) that provides basic CRUD endpoints for user management. The application uses environment variables for configuration and includes endpoints for creating, reading, updating, and deleting users.
+This is a comprehensive FastAPI-based application suite with:
+- **REST API** (`rest_app.py`) - Full CRUD endpoints for user management on port 5000
+- **Web Interface** (`web_app.py`) - HTML user display interface on port 5001
+- **Database Layer** (`db_connector.py`) - MySQL connection and operations
+- **Testing Suite** - Backend, frontend, and combined end-to-end testing
+- **Configuration Management** - Database-driven test configuration
 
 ## Development Setup
 
@@ -21,36 +26,84 @@ curl -sSL https://install.python-poetry.org | python3 -
 poetry install
 ```
 
-### Alternative setup with pip (legacy):
+### Alternative setup with pip (current):
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Running the Application
+## Database Setup
 
-Start the FastAPI development server with Poetry:
+**Prerequisites:** MySQL Docker container must be running
+
+Initialize the database and test data:
 ```bash
-poetry run python rest_app.py
+python setup_test_db.py
 ```
 
-Or with pip (legacy):
+This creates:
+- `users` table with user management data
+- `config` table with test configuration (API URLs, browser types, test users)
+
+## Running the Applications
+
+### REST API Server
 ```bash
 python rest_app.py
 ```
-
-The server runs with these defaults (configurable via environment variables):
 - Host: `0.0.0.0` (HOST env var)
-- Port: `5000` (PORT env var)  
+- Port: `5000` (PORT env var)
 - Reload: `true` (RELOAD env var)
+
+### Web Interface Server
+```bash
+python web_app.py
+```
+- Host: `127.0.0.1` (HOST env var)
+- Port: `5001` (WEB_PORT env var)
 
 ## API Endpoints
 
+### REST API (port 5000)
 - `POST /users` - Create a new user
-- `GET /users` - Get users (currently returns Hello World)
-- `PUT /` - Update (currently returns Hello World)
-- `DELETE /` - Delete (currently returns Hello World)
+- `GET /users` - Get all users
+- `GET /users/{user_id}` - Get specific user by ID
+- `PUT /users/{user_id}` - Update user information
+- `DELETE /users/{user_id}` - Delete user by ID
+
+### Web Interface (port 5001)
+- `GET /users/get_user_data/{user_id}` - Display user information as HTML
+
+## Testing Suite
+
+### Backend Testing
+```bash
+python backend_testing.py
+```
+- Checks MySQL Docker container status
+- Starts REST API server automatically
+- Tests all CRUD operations
+- Verifies database consistency
+
+### Frontend Testing
+```bash
+python frontend_testing.py
+```
+- Initializes database with `setup_test_db.py`
+- Loads configuration from database `config` table
+- Starts web application automatically
+- Supports dynamic browser selection (Chrome/Firefox)
+- Database-driven test parameters
+
+### Combined End-to-End Testing
+```bash
+python combined_testing.py
+```
+- Starts both REST API and web interface servers
+- Complete user lifecycle testing
+- API → Database → Web interface verification
+- Automatic server cleanup on completion
 
 ## Dependencies
 
@@ -63,8 +116,40 @@ Key packages used:
 - `selenium==4.34.2` - Web automation
 - `webdriver-manager==4.0.2` - WebDriver management
 
+## Key Features
+
+### Security Enhancements
+- **SQL Injection Protection**: All database queries use prepared statements with parameterized inputs
+- **Secure Database Operations**: Input validation and sanitization throughout
+
+### Configuration Management
+- **Database-Driven Testing**: Test parameters stored in `config` table
+- **Dynamic Browser Support**: Chrome and Firefox support via configuration
+- **Environment Variables**: Configurable hosts, ports, and settings
+
+### Automation Features
+- **Auto-Initialization**: Tests automatically set up required databases and servers
+- **Docker Integration**: MySQL container status verification
+- **Process Management**: Automatic server startup and cleanup
+- **Comprehensive Testing**: Backend, frontend, and end-to-end test coverage
+
+## Project Structure
+
+```
+├── rest_app.py           # REST API server (port 5000)
+├── web_app.py            # Web interface server (port 5001)
+├── db_connector.py       # Database connection and operations
+├── setup_test_db.py      # Database initialization
+├── backend_testing.py    # REST API testing
+├── frontend_testing.py   # Web interface testing
+├── combined_testing.py   # End-to-end testing
+├── requirements.txt      # Python dependencies
+└── .env                  # Environment configuration
+```
+
 ## Notes
 
-- The PUT and DELETE endpoints have empty paths (`""`) which may need correction
-- The application loads environment variables from a `.env` file using `python-dotenv`
-- Database connection setup is implied by the `pymysql` dependency but not yet implemented in the main app file
+- All applications load environment variables from `.env` file using `python-dotenv`
+- MySQL Docker container must be running for database operations
+- Testing framework automatically manages server lifecycles
+- Configuration-driven approach eliminates hardcoded test values

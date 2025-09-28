@@ -20,6 +20,9 @@ Usage:
 
 from db_connector import Database
 import requests
+import subprocess
+import sys
+import time
 
 url = "http://127.0.0.1:5000/users"
 
@@ -27,29 +30,45 @@ headers = {
     "Content-Type": "application/json"
 }
 
-def clear_users_data():
-    """Clear all data from the users table without dropping it.
+web_app_process = None
 
-    Connects to the database and executes a DELETE statement to remove
-    all records from the users table while preserving the table structure.
-
-    Raises:
-        Exception: If database operation fails
-    """
-    db = Database()
-    conn = db.get_connection()
-    cursor = conn.cursor()
-
+def check_mysql_docker():
+    """Check if MySQL Docker container is running"""
     try:
-        cursor.execute("DELETE FROM users")
-        conn.commit()
-        print("All user data cleared from users table")
+        print("Checking MySQL Docker container status...")
+        result = subprocess.run(['docker', 'ps', '--filter', 'name=mysql', '--format', 'table {{.Names}}\t{{.Status}}'],
+                              capture_output=True, text=True, timeout=10)
+
+        if result.returncode != 0:
+            print("Error running docker command")
+            return False
+
+        output = result.stdout.strip()
+        lines = output.split('\n')
+
+        if len(lines) < 2:  # Only header line, no containers
+            print("No MySQL container found")
+            return False
+
+        # Check if any line contains "Up" status
+        for line in lines[1:]:  # Skip header
+            if 'Up' in line:
+                print("MySQL Docker container is running")
+                return True
+
+        print("MySQL Docker container is not running")
+        return False
+
+    except subprocess.TimeoutExpired:
+        print("Docker command timed out")
+        return False
+    except FileNotFoundError:
+        print("Docker command not found - is Docker installed?")
+        return False
     except Exception as e:
-        print(f"Error clearing users data: {e}")
-    finally:
-        cursor.close()
-        conn.close()
-        
+        print(f"Error checking MySQL Docker: {e}")
+        return False
+
 def test_create_user():
     """Test user creation via POST request to REST API.
 
@@ -183,14 +202,43 @@ def verify_user_in_db(user_name):
         cursor.close()
         conn.close()
 
+def start_rest_app():
+    """Start the web_app.py server as a background process"""
+    global web_app_process
+    try:
+        print("Starting rest_app.py server...")
+        web_app_process = subprocess.Popen([sys.executable, "rest_app.py"],
+                                         stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE)
+        # Give the server time to start
+        time.sleep(3)
+        print("Rest app server started successfully")
+        return True
+    except Exception as e:
+        print(f"Failed to start rest app: {e}")
+        return False
                 
         
 if __name__ == "__main__":
     print("=== BACKEND TESTING START ===")
 
+    # Check MySQL Docker container first
+    print("\n0. Checking MySQL Docker container...")
+    if not check_mysql_docker():
+        print("Cannot proceed with testing - MySQL Docker container is not running")
+        print("Please start MySQL Docker container and try again")
+        exit(1)
+
+    db = Database()
+
     # Step 1: Clear existing data
     print("\n1. Clearing existing data...")
-    clear_users_data()
+    Database.clear_data()
+    
+    # Start the web app server
+    if not start_rest_app():
+        print("Cannot proceed with testing - rest app failed to start")
+        sys.exit(1)
 
     # Step 2: Test POST - Create new user
     print("\n2. Testing POST - Create new user...")

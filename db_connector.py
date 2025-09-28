@@ -237,6 +237,30 @@ class Database:
             return True
         finally:
             self.close_admin_connection()
+            
+    def clear_data():
+        """Clear all data from the users table without dropping it.
+
+        Connects to the database and executes a DELETE statement to remove
+        all records from the users table while preserving the table structure.
+
+        Raises:
+            Exception: If database operation fails
+        """
+        db = Database()
+        conn = db.get_connection()
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("DELETE FROM users")
+            cursor.execute("DELETE FROM config")
+            conn.commit()
+            print("All data cleared from users and config table")
+        except Exception as e:
+            print(f"Error clearing data: {e}")
+        finally:
+            cursor.close()
+            conn.close()        
 
     def close_admin_connection(self) -> None:
         """Close the administrative database connection."""

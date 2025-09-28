@@ -34,11 +34,30 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import subprocess
+import sys
+import time
 
 # Configuration
 REST_URL = "http://127.0.0.1:5000/users"
 WEB_URL = "http://127.0.0.1:5001/users/get_user_data"
 HEADERS = {"Content-Type": "application/json"}
+
+# Global process variables
+rest_app_process = None
+web_app_process = None
+
+def start_apps():
+    """Start both rest_app and web_app servers"""
+    global rest_app_process, web_app_process
+    rest_app_process = subprocess.Popen([sys.executable, "rest_app.py"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    web_app_process = subprocess.Popen([sys.executable, "web_app.py"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    time.sleep(4)  # Wait for both servers to start
+
+def stop_apps():
+    """Stop both servers"""
+    if rest_app_process: rest_app_process.terminate()
+    if web_app_process: web_app_process.terminate()
 
 def clear_users_data():
     """Clear all user data from the database.
@@ -229,6 +248,7 @@ def combined_test():
     """
     print("=== COMBINED TEST START ===")
 
+    start_apps()
     clear_users_data()
     test_user_name = "Combined Test User"
     driver = None
@@ -256,6 +276,7 @@ def combined_test():
     finally:
         if driver:
             driver.quit()
+        stop_apps()
 
 if __name__ == "__main__":
     combined_test()
