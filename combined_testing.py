@@ -272,7 +272,7 @@ def combined_test():
 
     except Exception as e:
         print(f"❌ Test failed: {e}")
-        return False
+        raise Exception("test failed")
     finally:
         if driver:
             driver.quit()

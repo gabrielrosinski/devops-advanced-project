@@ -100,10 +100,10 @@ def test_create_user():
         return response
     except AssertionError as e:
         print(f"Assertion failed: {e}")
-        return None
+        raise Exception("test failed")
     except Exception as e:
         print(f"Error making POST request: {e}")
-        return None
+        raise Exception("test failed")
 
 
 def test_get_new_user():
@@ -132,10 +132,10 @@ def test_get_new_user():
         return response
     except AssertionError as e:
         print(f"Assertion failed: {e}")
-        return None
+        raise Exception("test failed")
     except Exception as e:
         print(f"Error making GET request: {e}")
-        return None
+        raise Exception("test failed")
 
 def test_get_user_by_id(user_id):
     """Test retrieval of specific user by ID.
@@ -164,10 +164,10 @@ def test_get_user_by_id(user_id):
         return response
     except AssertionError as e:
         print(f"GET assertion failed: {e}")
-        return None
+        raise Exception("test failed")
     except Exception as e:
         print(f"Error making GET request: {e}")
-        return None
+        raise Exception("test failed")
 
 def verify_user_in_db(user_name):
     """Verify user exists in database using direct SQL query.
@@ -197,7 +197,7 @@ def verify_user_in_db(user_name):
         return True
     except AssertionError as e:
         print(f"Database assertion failed: {e}")
-        return False
+        raise Exception("test failed")
     finally:
         cursor.close()
         conn.close()

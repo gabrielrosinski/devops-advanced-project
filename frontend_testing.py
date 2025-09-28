@@ -168,11 +168,14 @@ def test_user_interface(config):
             try:
                 error_element = driver.find_element(By.ID, "error")
                 print(f"Error found: {error_element.text}")
+                raise Exception("test failed")
             except:
                 print("Neither user nor error element found")
+                raise Exception("test failed")
 
     except Exception as e:
         print(f"Test failed with error: {e}")
+        raise Exception("test failed")
 
     finally:
         # Close the browser
