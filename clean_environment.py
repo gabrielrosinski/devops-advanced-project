@@ -14,6 +14,7 @@ import sys
 import signal
 import subprocess
 import time
+import requests
 from typing import List, Optional
 
 def find_processes_by_name(process_name: str) -> List[int]:
@@ -82,24 +83,28 @@ def stop_process_gracefully(pid: int, timeout: int = 5) -> bool:
         return False
 
 def cleanup_background_services():
-    """Stop background Python services (REST API and Web App)."""
+    """Stop background Python services (REST API and Web App) using HTTP endpoints."""
     print("=== Stopping Background Services ===")
 
     services = [
-        "python rest_app.py",
-        "python web_app.py"
+        ("REST API", "http://127.0.0.1:5000/stop_server"),
+        ("Web App", "http://127.0.0.1:5001/stop_server")
     ]
 
-    for service in services:
-        print(f"Looking for processes: {service}")
-        pids = find_processes_by_name(service)
-
-        if pids:
-            print(f"Found {len(pids)} process(es): {pids}")
-            for pid in pids:
-                stop_process_gracefully(pid)
-        else:
-            print(f"No processes found for: {service}")
+    for service_name, stop_url in services:
+        print(f"Stopping {service_name} via {stop_url}")
+        try:
+            response = requests.get(stop_url, timeout=5)
+            if response.status_code == 200:
+                print(f"✅ {service_name} stopped successfully")
+            else:
+                print(f"⚠️ {service_name} returned status {response.status_code}: {response.text}")
+        except requests.exceptions.ConnectionError:
+            print(f"ℹ️ {service_name} is not running (connection refused)")
+        except requests.exceptions.Timeout:
+            print(f"⚠️ {service_name} stop request timed out")
+        except Exception as e:
+            print(f"❌ Error stopping {service_name}: {e}")
 
     print("Background services cleanup completed")
 
