@@ -106,7 +106,7 @@ jobs:
             echo "Waiting for REST API... (attempt $i/30)"
             sleep 2
           done
-          if ! curl -f http://127.0.0.1:5000 > /dev/null 2>&1; then
+          if ! curl -f http://127.0.0.1:5000/users > /dev/null 2>&1; then
             echo "Rest App failed to start after 60 seconds"
             exit 1
           fi
