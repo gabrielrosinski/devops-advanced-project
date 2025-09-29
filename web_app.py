@@ -54,6 +54,11 @@ def get_user_name_from_db(user_id):
         cursor.close()
         conn.close()
         
+@app.get('/healthz')
+async def health_check():
+    """Health check endpoint for monitoring service status."""
+    return {"status": "healthy", "service": "web-app"}
+
 @app.get('/stop_server')
 async def stop_server():
     """Gracefully stop the web server with error handling."""

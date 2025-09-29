@@ -88,48 +88,42 @@ jobs:
           fi
           python setup_test_db.py
 
-      - name: Start Rest server
+      - name: Start Applications and Run Tests
         env:
           HOST: 127.0.0.1
         run: |
-          # Run your app in the background
+          # Start REST API
+          echo "Starting REST API server..."
           nohup python rest_app.py > server.log 2>&1 &
 
-      - name: Wait for REST API to be ready
-        run: |
-          # Wait for API to respond
+          # Wait for REST API health check
           for i in {1..30}; do
-            if curl -f http://127.0.0.1:5000/users > /dev/null 2>&1; then
-              echo "REST API is ready!"
+            if curl -f http://127.0.0.1:5000/healthz > /dev/null 2>&1; then
+              echo "REST API is healthy!"
               break
             fi
             echo "Waiting for REST API... (attempt $i/30)"
             sleep 2
           done
-          if ! curl -f http://127.0.0.1:5000/users > /dev/null 2>&1; then
-            echo "Rest App failed to start after 60 seconds"
+          if ! curl -f http://127.0.0.1:5000/healthz > /dev/null 2>&1; then
+            echo "REST API failed to start after 60 seconds"
             exit 1
           fi
 
-      - name: Start Web App
-        env:
-          HOST: 127.0.0.1
-        run: |
-          # Run your app in the background
+          # Start Web App
+          echo "Starting Web App server..."
           nohup python web_app.py > web.log 2>&1 &
 
-      - name: Wait for Web App to be ready
-        run: |
-          # Wait for web app to respond
+          # Wait for Web App health check
           for i in {1..30}; do
-            if curl -f http://127.0.0.1:5001 > /dev/null 2>&1; then
-              echo "Web App is ready!"
+            if curl -f http://127.0.0.1:5001/healthz > /dev/null 2>&1; then
+              echo "Web App is healthy!"
               break
             fi
             echo "Waiting for Web App... (attempt $i/30)"
             sleep 2
           done
-          if ! curl -f http://127.0.0.1:5001 > /dev/null 2>&1; then
+          if ! curl -f http://127.0.0.1:5001/healthz > /dev/null 2>&1; then
             echo "Web App failed to start after 60 seconds"
             exit 1
           fi
@@ -142,7 +136,7 @@ jobs:
           fi
           python backend_testing.py
 
-      - name: Run web tests
+      - name: Run Frontend Tests
         run: |
           if [ ! -f frontend_testing.py ]; then
             echo "Error: frontend_testing.py not found"
