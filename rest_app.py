@@ -27,13 +27,18 @@ Usage:
 """
 
 import os
+import uvicorn 
+import asyncio
 from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 from dotenv import load_dotenv
-import uvicorn
 from db_connector import Database
 from typing import Optional
 from datetime import datetime
+from fastapi import HTTPException
+from server_utiliy import shutdown_server
+
+
 
 load_dotenv()
 
@@ -68,6 +73,19 @@ class User(BaseModel):
     user_name: str
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    
+    
+@app.get('/stop_server')
+async def stop_server():
+    """Gracefully stop the web server with error handling."""
+    try:
+        print("Shutdown request received")
+        response = {"message" : "Server shutting down gracefully"}
+        asyncio.create_task(shutdown_server())
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"failed to stop the server: {str(e)}") 
+    
 
 @app.post("/users")
 async def create_user(user: User, conn = Depends(get_db)):

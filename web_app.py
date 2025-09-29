@@ -21,11 +21,14 @@ Usage:
 """
 
 import os
+import asyncio
+import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from dotenv import load_dotenv
 from db_connector import Database
-import uvicorn
+from server_utiliy import shutdown_server
+from fastapi import HTTPException
 
 load_dotenv()
 
@@ -50,6 +53,18 @@ def get_user_name_from_db(user_id):
     finally:
         cursor.close()
         conn.close()
+        
+@app.get('/stop_server')
+async def stop_server():
+    """Gracefully stop the web server with error handling."""
+    try:
+        print("Shutdown request received")
+        response = {"message" : "Server shutting down gracefully"}
+        asyncio.create_task(shutdown_server())
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"failed to stop the server: {str(e)}")    
+        
 
 @app.get("/users/get_user_data/{user_id}", response_class=HTMLResponse)
 def get_user_data(user_id: str):
