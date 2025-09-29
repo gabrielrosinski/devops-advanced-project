@@ -76,10 +76,42 @@ def create_driver(browser_type):
 
     if browser_type == 'firefox':
         service = FirefoxService(GeckoDriverManager().install())
-        return webdriver.Firefox(service=service)
+        options = webdriver.FirefoxOptions()
+
+        # Add headless mode for CI environments
+        if os.getenv('CI') or os.getenv('GITHUB_ACTIONS'):
+            options.add_argument('--headless')
+
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+
+        return webdriver.Firefox(service=service, options=options)
     else:  # Default to Chrome
         service = Service(ChromeDriverManager().install())
-        return webdriver.Chrome(service=service)
+        options = webdriver.ChromeOptions()
+
+        # Add headless mode for CI environments
+        if os.getenv('CI') or os.getenv('GITHUB_ACTIONS'):
+            options.add_argument('--headless')
+
+        # Chrome options for CI environments
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('--disable-gpu')
+        options.add_argument('--disable-web-security')
+        options.add_argument('--allow-running-insecure-content')
+        options.add_argument('--disable-extensions')
+        options.add_argument('--disable-plugins')
+        options.add_argument('--disable-images')
+        options.add_argument('--disable-javascript')
+        options.add_argument('--window-size=1920,1080')
+
+        # Unique user data directory to avoid conflicts
+        import tempfile
+        temp_dir = tempfile.mkdtemp()
+        options.add_argument(f'--user-data-dir={temp_dir}')
+
+        return webdriver.Chrome(service=service, options=options)
 
 def start_web_app():
     """Start the web_app.py server as a background process"""
