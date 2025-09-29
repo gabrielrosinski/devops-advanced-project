@@ -1,0 +1,143 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ phase2 ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_USER: root
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_ROOT_USER: root
+      DB_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # Install MySQL client for health checks
+          sudo apt-get update
+          sudo apt-get install -y mysql-client
+
+      - name: Wait for MySQL
+        run: |
+          # Create MySQL client config to avoid password in command line
+          cat > ~/.my.cnf << EOF
+          [client]
+          host=127.0.0.1
+          port=3306
+          user=root
+          password=${{ secrets.DB_ROOT_PASSWORD }}
+          EOF
+          chmod 600 ~/.my.cnf
+
+          # Wait for MySQL to be ready
+          for i in {1..30}; do
+            if mysqladmin ping --silent; then
+              echo "MySQL is ready!"
+              break
+            fi
+            echo "Waiting for MySQL... (attempt $i/30)"
+            sleep 2
+          done
+
+          # Clean up config file
+          rm ~/.my.cnf
+
+      - name: Initialize database
+        run: |
+          python setup_test_db.py
+
+      - name: Start Rest server
+        run: |
+          # Run your app in the background
+          nohup python rest_app.py > server.log 2>&1 &
+          sleep 5
+
+      - name: Wait for REST API to be ready
+        run: |
+          # Wait for API to respond
+          for i in {1..30}; do
+            if curl -f http://localhost:5000/users > /dev/null 2>&1; then
+              echo "REST API is ready!"
+              break
+            fi
+            echo "Waiting for REST API... (attempt $i/30)"
+            sleep 2
+          done
+
+      - name: Start Web App
+        run: |
+          # Run your app in the background
+          nohup python web_app.py > web.log 2>&1 &
+          sleep 5
+
+      - name: Wait for Web App to be ready
+        run: |
+          # Wait for web app to respond
+          for i in {1..30}; do
+            if curl -f http://localhost:5001 > /dev/null 2>&1; then
+              echo "Web App is ready!"
+              break
+            fi
+            echo "Waiting for Web App... (attempt $i/30)"
+            sleep 2
+          done
+
+      - name: Run Backend Tests
+        run: |
+          python backend_testing.py
+
+      - name: Run web tests
+        run: |
+          python frontend_testing.py
+
+      - name: Run Combined Tests
+        run: |
+          python combined_testing.py
+
+      - name: Cleanup Environment
+        if: always()
+        run: |
+          python clean_environment.py
+
+      - name: Show Logs on Failure
+        if: failure()
+        run: |
+          echo "=== REST API Logs ==="
+          cat server.log 2>/dev/null || echo "No server log found"
+          echo ""
+          echo "=== Web App Logs ==="
+          cat web.log 2>/dev/null || echo "No web log found"
+
