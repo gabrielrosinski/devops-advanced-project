@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module backend_testing</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">backend_testing</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:/mnt/c/Devops%20projects/devops-advanced-project/backend_testing.py">/mnt/c/Devops projects/devops-advanced-project/backend_testing.py</a></td></tr></table>
+    <p><span class="code">Backend&nbsp;Testing&nbsp;Module<br>
+&nbsp;<br>
+This&nbsp;module&nbsp;provides&nbsp;comprehensive&nbsp;testing&nbsp;for&nbsp;the&nbsp;REST&nbsp;API&nbsp;backend.<br>
+It&nbsp;includes&nbsp;tests&nbsp;for&nbsp;user&nbsp;creation,&nbsp;retrieval,&nbsp;and&nbsp;database&nbsp;verification.<br>
+&nbsp;<br>
+Test&nbsp;Functions:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<a href="#-clear_users_data">clear_users_data</a>():&nbsp;Clear&nbsp;all&nbsp;user&nbsp;data&nbsp;from&nbsp;database<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<a href="#-test_create_user">test_create_user</a>():&nbsp;Test&nbsp;POST&nbsp;user&nbsp;creation&nbsp;endpoint<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<a href="#-test_get_new_user">test_get_new_user</a>():&nbsp;Test&nbsp;GET&nbsp;all&nbsp;users&nbsp;endpoint<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<a href="#-test_get_user_by_id">test_get_user_by_id</a>():&nbsp;Test&nbsp;GET&nbsp;specific&nbsp;user&nbsp;endpoint<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<a href="#-verify_user_in_db">verify_user_in_db</a>():&nbsp;Verify&nbsp;user&nbsp;exists&nbsp;in&nbsp;database<br>
+&nbsp;<br>
+Configuration:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;REST&nbsp;API&nbsp;URL:&nbsp;<a href="http://127.0.0.1:5000/users">http://127.0.0.1:5000/users</a><br>
+&nbsp;<br>
+Usage:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;python&nbsp;backend_testing.py</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="requests.html">requests</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-clear_users_data"><strong>clear_users_data</strong></a>()</dt><dd><span class="code">Clear&nbsp;all&nbsp;data&nbsp;from&nbsp;the&nbsp;users&nbsp;table&nbsp;without&nbsp;dropping&nbsp;it.<br>
+&nbsp;<br>
+Connects&nbsp;to&nbsp;the&nbsp;database&nbsp;and&nbsp;executes&nbsp;a&nbsp;DELETE&nbsp;statement&nbsp;to&nbsp;remove<br>
+all&nbsp;records&nbsp;from&nbsp;the&nbsp;users&nbsp;table&nbsp;while&nbsp;preserving&nbsp;the&nbsp;table&nbsp;structure.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Exception:&nbsp;If&nbsp;database&nbsp;operation&nbsp;fails</span></dd></dl>
+ <dl><dt><a name="-test_create_user"><strong>test_create_user</strong></a>()</dt><dd><span class="code">Test&nbsp;user&nbsp;creation&nbsp;via&nbsp;POST&nbsp;request&nbsp;to&nbsp;REST&nbsp;API.<br>
+&nbsp;<br>
+Creates&nbsp;a&nbsp;test&nbsp;user&nbsp;and&nbsp;validates&nbsp;the&nbsp;API&nbsp;response&nbsp;contains<br>
+the&nbsp;expected&nbsp;fields&nbsp;and&nbsp;values.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;requests.Response&nbsp;or&nbsp;None:&nbsp;API&nbsp;response&nbsp;if&nbsp;successful,&nbsp;None&nbsp;if&nbsp;failed<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;AssertionError:&nbsp;If&nbsp;API&nbsp;response&nbsp;validation&nbsp;fails</span></dd></dl>
+ <dl><dt><a name="-test_get_new_user"><strong>test_get_new_user</strong></a>()</dt><dd><span class="code">Test&nbsp;retrieval&nbsp;of&nbsp;all&nbsp;users&nbsp;via&nbsp;GET&nbsp;request.<br>
+&nbsp;<br>
+Makes&nbsp;a&nbsp;GET&nbsp;request&nbsp;to&nbsp;retrieve&nbsp;all&nbsp;users&nbsp;and&nbsp;validates<br>
+the&nbsp;response&nbsp;structure.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;requests.Response&nbsp;or&nbsp;None:&nbsp;API&nbsp;response&nbsp;if&nbsp;successful,&nbsp;None&nbsp;if&nbsp;failed<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;AssertionError:&nbsp;If&nbsp;API&nbsp;response&nbsp;validation&nbsp;fails</span></dd></dl>
+ <dl><dt><a name="-test_get_user_by_id"><strong>test_get_user_by_id</strong></a>(user_id)</dt><dd><span class="code">Test&nbsp;retrieval&nbsp;of&nbsp;specific&nbsp;user&nbsp;by&nbsp;ID.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;user_id&nbsp;(int):&nbsp;ID&nbsp;of&nbsp;the&nbsp;user&nbsp;to&nbsp;retrieve<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;requests.Response&nbsp;or&nbsp;None:&nbsp;API&nbsp;response&nbsp;if&nbsp;successful,&nbsp;None&nbsp;if&nbsp;failed<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;AssertionError:&nbsp;If&nbsp;API&nbsp;response&nbsp;validation&nbsp;fails</span></dd></dl>
+ <dl><dt><a name="-verify_user_in_db"><strong>verify_user_in_db</strong></a>(user_name)</dt><dd><span class="code">Verify&nbsp;user&nbsp;exists&nbsp;in&nbsp;database&nbsp;using&nbsp;direct&nbsp;SQL&nbsp;query.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;user_name&nbsp;(str):&nbsp;Username&nbsp;to&nbsp;search&nbsp;for&nbsp;in&nbsp;database<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool:&nbsp;True&nbsp;if&nbsp;user&nbsp;found&nbsp;and&nbsp;verified,&nbsp;False&nbsp;otherwise<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;AssertionError:&nbsp;If&nbsp;user&nbsp;not&nbsp;found&nbsp;or&nbsp;data&nbsp;doesn't&nbsp;match</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>headers</strong> = {'Content-Type': 'application/json'}<br>
+<strong>url</strong> = 'http://127.0.0.1:5000/users'</td></tr></table>
+</body></html>
