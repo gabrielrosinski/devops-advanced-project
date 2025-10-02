@@ -23,12 +23,13 @@ Usage:
 import os
 import asyncio
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from dotenv import load_dotenv
 from db_connector import Database
 from server_utiliy import shutdown_server
 from fastapi import HTTPException
+from fastapi.responses import JSONResponse
 
 load_dotenv()
 
@@ -90,6 +91,14 @@ def get_user_data(user_id: str):
         return f"<H1 id='error'>no such user: {user_id}</H1>"
     
     return f"<H1 id='user'>{user_name}</H1>"
+
+
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc):
+    return JSONResponse(
+        status_code=404,
+        content={"error": "Route not found", "path": str(request.url)}
+    )
     
 if __name__ == "__main__":
     HOST = os.getenv("HOST", "127.0.0.1")

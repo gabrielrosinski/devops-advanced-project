@@ -29,13 +29,14 @@ Usage:
 import os
 import uvicorn 
 import asyncio
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Request, Depends
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from db_connector import Database
 from typing import Optional
 from datetime import datetime
 from fastapi import HTTPException
+from fastapi.responses import JSONResponse
 from server_utiliy import shutdown_server
 
 
@@ -210,6 +211,14 @@ async def delete_user(user_id: int, conn = Depends(get_db)):
         return {"message": f"User with id {user_id} was deleted successfully"}
     finally:
         cursor.close()
+        
+        
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc):
+    return JSONResponse(
+        status_code=404,
+        content={"error": "Route not found", "path": str(request.url)}
+    )        
 
 if __name__ == "__main__":
     uvicorn.run(
@@ -220,41 +229,3 @@ if __name__ == "__main__":
     )
     
     
-    
-# > where we need to have the .env vars while using github action. in github secret ?
-
-# ● Yes, for GitHub Actions you should store environment variables as GitHub Secrets. Here's how:
-
-#   GitHub Secrets Setup
-
-#   1. Repository Settings → Secrets and variables → Actions
-#   2. Add repository secrets for each environment variable:
-#     - HOST
-#     - WEB_PORT
-#     - PORT
-#     - DB_HOST
-#     - DB_USER
-#     - DB_PASSWORD
-#     - Any other .env variables
-
-#   GitHub Actions Workflow
-
-#   In your .github/workflows/*.yml file:
-
-#   jobs:
-#     test:
-#       runs-on: ubuntu-latest
-#       env:
-#         HOST: ${{ secrets.HOST }}
-#         WEB_PORT: ${{ secrets.WEB_PORT }}
-#         PORT: ${{ secrets.PORT }}
-#         DB_HOST: ${{ secrets.DB_HOST }}
-#         DB_USER: ${{ secrets.DB_USER }}
-#         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-
-#       steps:
-#         - uses: actions/checkout@v4
-#         - name: Run tests
-#           run: poetry run python test/frontend_testing.py
-
-#   Never commit .env files to the repository - GitHub Secrets keep sensitive data secure in CI/CD pipelines.   
