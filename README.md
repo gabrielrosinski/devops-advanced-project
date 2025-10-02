@@ -18,6 +18,8 @@ This project consists of multiple interconnected applications:
 ├── rest_app.py           # REST API server (port 5000)
 ├── web_app.py            # Web interface server (port 5001)
 ├── db_connector.py       # Database connection and operations
+├── server_utiliy.py      # Server shutdown utility
+├── clean_environment.py  # Environment cleanup script
 ├── setup_test_db.py      # Database initialization and test data
 ├── backend_testing.py    # REST API testing
 ├── frontend_testing.py   # Web interface testing (Selenium)
@@ -231,19 +233,30 @@ python web_app.py
 ### rest_app.py - REST API Server
 - **Purpose**: Provides RESTful API endpoints for user management
 - **Port**: 5000 (configurable)
-- **Features**: Full CRUD operations, data validation, automatic database connection
-- **Security**: SQL injection protection via prepared statements
+- **Features**: Full CRUD operations, data validation, automatic database connection, health checks, graceful shutdown
+- **Security**: SQL injection protection via prepared statements, custom 404 error handling
 
 ### web_app.py - Web Interface
 - **Purpose**: HTML frontend for displaying user data
 - **Port**: 5001 (configurable)
-- **Features**: User data visualization, error handling for missing users
+- **Features**: User data visualization, error handling for missing users, health checks, graceful shutdown
 - **Integration**: Queries database directly for user information
+- **Security**: Custom 404 error handling
 
 ### db_connector.py - Database Layer
 - **Purpose**: Centralized database connection and operations
 - **Features**: Connection pooling, automatic database/table creation, prepared statements
 - **Methods**: `get_connection()`, `clear_data()`, database initialization
+
+### server_utiliy.py - Server Shutdown Utility
+- **Purpose**: Provides graceful server shutdown functionality
+- **Features**: Async shutdown with configurable delay, environment-aware shutdown strategy
+- **Usage**: Used by `/stop_server` endpoints in both applications
+
+### clean_environment.py - Environment Cleanup Script
+- **Purpose**: Automated cleanup of testing environment after CI/CD pipeline execution
+- **Features**: Graceful service shutdown via HTTP endpoints, log file cleanup, database reset, temp file removal
+- **Usage**: `python clean_environment.py`
 
 ## Testing Suite
 
@@ -304,6 +317,8 @@ python combined_testing.py
 
 | Method | Endpoint | Description | Example |
 |--------|----------|-------------|---------|
+| GET | `/healthz` | Health check endpoint | Returns service status |
+| GET | `/stop_server` | Gracefully stop the server | Triggers shutdown |
 | POST | `/users` | Create a new user | `{"user_name": "john_doe"}` |
 | GET | `/users` | Get all users | Returns list of all users |
 | GET | `/users/{user_id}` | Get specific user by ID | `/users/1` |
@@ -314,9 +329,21 @@ python combined_testing.py
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
+| GET | `/healthz` | Health check endpoint |
+| GET | `/stop_server` | Gracefully stop the server |
 | GET | `/users/get_user_data/{user_id}` | Display user as HTML |
 
 ### Example API Usage
+
+**Health check:**
+```bash
+curl -X GET "http://localhost:5000/healthz"
+```
+
+**Stop server:**
+```bash
+curl -X GET "http://localhost:5000/stop_server"
+```
 
 **Create a user:**
 ```bash
@@ -362,6 +389,7 @@ curl -X DELETE "http://localhost:5000/users/1"
 - **SQL Injection Protection**: All database queries use prepared statements
 - **Input Validation**: Pydantic models ensure data integrity
 - **Environment Variables**: Sensitive data stored in `.env` file
+- **Custom Error Handling**: 404 error handlers for non-existing routes in both applications
 
 ### Configuration Management
 - **Database-Driven Testing**: Test parameters stored in `config` table
@@ -373,6 +401,8 @@ curl -X DELETE "http://localhost:5000/users/1"
 - **Docker Integration**: MySQL container status verification
 - **Process Management**: Automatic server startup and cleanup
 - **Comprehensive Testing**: Backend, frontend, and end-to-end coverage
+- **Graceful Shutdown**: Health check and server stop endpoints for controlled shutdown
+- **Environment Cleanup**: Automated cleanup script for CI/CD pipelines
 
 ## Troubleshooting
 
